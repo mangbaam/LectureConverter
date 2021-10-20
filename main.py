@@ -80,9 +80,12 @@ def addLecture(school, term):
 def change():
     f = open(path, encoding='utf-8')
     data = json.load(f)
-    new_data = {'Lectures': data}
+    lectures = data['USW']
+    new_data = {'USW': {'Lectures': {'2021_2': lectures}}}
+
     outfile = open(path, 'w', encoding='utf-8')
     json.dump(new_data, outfile)
+
     outfile.close()
     f.close()
 
