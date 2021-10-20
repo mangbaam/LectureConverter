@@ -42,9 +42,23 @@ def addLecture(school, term):
                 # 교양 영역 처리
                 if column == "cltTerrCd":
                     infos[translate[column]] = cltTerr[lecture[column]]
+                # 시간, 장소정보 분리
+                elif column == "timtSmryCn":
+                    timeSummary = lecture[column].split('),')
+                    print(timeSummary)
+                    timeAndPlaces = []
+                    for info in timeSummary:
+                        print(info, end=' ')
+                        time, place = info.rstrip(')').split('(')
+                        tpData = {"time": time, "place": place}
+                        timeAndPlaces.append(tpData)
+                    print()
+                    infos["시간 및 장소"] = timeAndPlaces
+
                 else:
                     infos[translate[column]] = lecture[column]
         lectureList[key] = infos
+    print(lectureList.items())
 
     f = open(path, encoding='utf-8')
     realtimeDB = json.load(f)
@@ -63,5 +77,16 @@ def addLecture(school, term):
     outfile.close()
 
 
+def change():
+    f = open(path, encoding='utf-8')
+    data = json.load(f)
+    new_data = {'Lectures': data}
+    outfile = open(path, 'w', encoding='utf-8')
+    json.dump(new_data, outfile)
+    outfile.close()
+    f.close()
+
+
 if __name__ == '__main__':
-    addLecture("USW", "2021_2")
+    # addLecture("USW", "2021_2")
+    change()
