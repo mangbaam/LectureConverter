@@ -43,22 +43,21 @@ def addLecture(school, term):
                 if column == "cltTerrCd":
                     infos[translate[column]] = cltTerr[lecture[column]]
                 # 시간, 장소정보 분리
-                elif column == "timtSmryCn":
-                    timeSummary = lecture[column].split('),')
-                    print(timeSummary)
-                    timeAndPlaces = []
-                    for info in timeSummary:
-                        print(info, end=' ')
-                        time, place = info.rstrip(')').split('(')
-                        tpData = {"time": time, "place": place}
-                        timeAndPlaces.append(tpData)
-                    print()
-                    infos["시간 및 장소"] = timeAndPlaces
+                # elif column == "timtSmryCn":
+                #     timeSummary = lecture[column].split('),')
+                #     print(timeSummary)
+                #     timeAndPlaces = []
+                #     for info in timeSummary:
+                #         print(info, end=' ')
+                #         time, place = info.rstrip(')').split('(')
+                #         tpData = {"time": time, "place": place}
+                #         timeAndPlaces.append(tpData)
+                #     print()
+                #     infos["시간 및 장소"] = timeAndPlaces
 
                 else:
                     infos[translate[column]] = lecture[column]
         lectureList[key] = infos
-    print(lectureList.items())
 
     f = open(path, encoding='utf-8')
     realtimeDB = json.load(f)
@@ -66,22 +65,34 @@ def addLecture(school, term):
 
     if school not in realtimeDB.keys():
         raise Exception("사용 불가한 학교입니다.")
-    elif term not in realtimeDB[school].keys():
+    elif term not in realtimeDB[school]['Lectures'].keys():
         raise Exception("해당 학기 정보가 없습니다.")
     else:
-        realtimeDB[school][term] = lectureList
+        realtimeDB[school]['Lectures'][term] = lectureList
 
     # 기존의 DB 대체
     outfile = open(path, 'w', encoding='utf-8')
     json.dump(realtimeDB, outfile)
     outfile.close()
 
+    myDict = {"USW": {"Lectures": {"2021_1": {}, "2021_2": {}}}}
+
 
 def change():
     f = open(path, encoding='utf-8')
     data = json.load(f)
     lectures = data['USW']
-    new_data = {'USW': {'Lectures': {'2021_2': lectures}}}
+    t2021_2 = {}
+    for key, value in lectures:
+        t2021_2[key] = value
+    new_data = {'USW':
+        {'Lectures':
+            {
+                '2021_1': {},
+                '2021_2': t2021_2
+            }
+        }
+    }
 
     outfile = open(path, 'w', encoding='utf-8')
     json.dump(new_data, outfile)
@@ -91,5 +102,5 @@ def change():
 
 
 if __name__ == '__main__':
-    # addLecture("USW", "2021_2")
-    change()
+    addLecture("USW", "2021_2")
+    # change()
